@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import RootLayout from '../../layouts/RootLayout.astro';
+import { formatDate } from '../../utils';
+
+export async function getStaticPaths() {
+    const posts = await getCollection('blog');
+    return posts.map(post => ({
+        params: { slug: post.slug }, props: post,
+    }));
+}
+
+const post = Astro.props;
+const { Content } = await post.render();
+---
+<RootLayout>
+    <h1 class="title font-semibold text-2xl tracking-tighter">
+        {post.data.title}
+    </h1>
+    <div class="flex justify-between items-center mt-2 mb-8 text-sm">
+        <p class="text-sm text-neutral-600 dark:text-neutral-400">
+            {formatDate(post.data.publishedAt.toString())}
+        </p>
+    </div>
+    <article class="prose">
+        <Content />
+    </article>
+</RootLayout>
